@@ -192,7 +192,9 @@ class GiftedChat extends React.Component {
   // TODO
   // setMinInputToolbarHeight
   getMinInputToolbarHeight() {
-    if (this.props.renderAccessory) {
+    if(this.props.disableInputToolbar === true) {
+      return 0;
+    } else if (this.props.renderAccessory) {
       return MIN_INPUT_TOOLBAR_HEIGHT * 2;
     }
     return MIN_INPUT_TOOLBAR_HEIGHT;
