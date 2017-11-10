@@ -1,16 +1,55 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {
   StyleSheet,
   View,
+  Keyboard,
+  ViewPropTypes,
+  Dimensions
 } from 'react-native';
 
 import Composer from './Composer';
 import Send from './Send';
+import Actions from './Actions';
 
 export default class InputToolbar extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      position: 'absolute'
+    };
+  }
+
+  componentWillMount () {
+    this.keyboardWillShowListener =
+      Keyboard.addListener('keyboardWillShow', this._keyboardWillShow);
+    this.keyboardWillHideListener =
+      Keyboard.addListener('keyboardWillHide', this._keyboardWillHide);
+  }
+
+  componentWillUnmount () {
+    this.keyboardWillShowListener.remove();
+    this.keyboardWillHideListener.remove();
+  }
+
+  _keyboardWillShow = () => {
+    this.setState({
+      position: 'relative'
+    });
+  }
+
+  _keyboardWillHide = () => {
+    this.setState({
+      position: 'absolute'
+    });
+  }
+  
   renderActions() {
     if (this.props.renderActions) {
       return this.props.renderActions(this.props);
+    } else if (this.props.onPressActionButton) {
+      return <Actions {...this.props} />;
     }
     return null;
   }
@@ -47,7 +86,8 @@ export default class InputToolbar extends React.Component {
 
   render() {
     return (
-      <View style={[styles.container, this.props.containerStyle]}>
+      <View
+        style={[styles.container, this.props.containerStyle, { position: this.state.position }]}>
         <View style={[styles.primary, this.props.primaryStyle]}>
           {this.renderActions()}
           {this.renderComposer()}
@@ -64,6 +104,8 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#b2b2b2',
     backgroundColor: '#FFFFFF',
+    bottom: 0,
+    width: Dimensions.get('window').width
   },
   primary: {
     flexDirection: 'row',
@@ -85,11 +127,12 @@ InputToolbar.defaultProps = {
 };
 
 InputToolbar.propTypes = {
-  renderAccessory: React.PropTypes.func,
-  renderActions: React.PropTypes.func,
-  renderSend: React.PropTypes.func,
-  renderComposer: React.PropTypes.func,
-  containerStyle: View.propTypes.style,
-  primaryStyle: View.propTypes.style,
-  accessoryStyle: View.propTypes.style,
+  renderAccessory: PropTypes.func,
+  renderActions: PropTypes.func,
+  renderSend: PropTypes.func,
+  renderComposer: PropTypes.func,
+  onPressActionButton: PropTypes.func,
+  containerStyle: ViewPropTypes.style,
+  primaryStyle: ViewPropTypes.style,
+  accessoryStyle: ViewPropTypes.style,
 };
