@@ -73,7 +73,7 @@ export default class Message extends React.Component {
             {this.renderBubble()}
             {this.props.position === 'right' ? this.renderAvatar() : null}
           </View>
-        )}
+        }
       </View>
     );
   }
